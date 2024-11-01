@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   HomeIcon,
   UserGroupIcon,
   LightBulbIcon,
-  ChatBubbleLeftRightIcon,
   ChartBarIcon,
   QuestionMarkCircleIcon,
   BuildingOfficeIcon,

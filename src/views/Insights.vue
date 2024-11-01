@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const energyUsage = ref([
-  { month: 'Jan', usage: 450 },
-  { month: 'Feb', usage: 420 },
-  { month: 'Mar', usage: 380 },
-  { month: 'Apr', usage: 350 }
-]);
-
 const goals = ref([
   {
     id: 1,
@@ -24,6 +17,12 @@ const goals = ref([
     unit: 'kg'
   }
 ]);
+
+const energyUsage = ref([
+  { month: 'January', usage: 320 },
+  { month: 'February', usage: 280 },
+  { month: 'March', usage: 250 }
+]);
 </script>
 
 <template>
@@ -33,7 +32,13 @@ const goals = ref([
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-semibold text-gray-900">Energy Usage</h2>
-        <div class="mt-4 h-64 bg-gray-50 rounded-lg"></div>
+        <div class="mt-4 h-64 bg-gray-50 rounded-lg">
+          <ul>
+            <li v-for="(data, index) in energyUsage" :key="index">
+              {{ data.month }}: {{ data.usage }} kWh
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="bg-white rounded-lg shadow-md p-6">
