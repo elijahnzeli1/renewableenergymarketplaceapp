@@ -1,58 +1,102 @@
-import express from 'express';
-import Plan from '../models/Plan.js';
-import auth from '../middleware/auth.js';
-
+const express = require("express");
 const router = express.Router();
+const Plan = require("../models/Plan");
 
-// Get all plans
-router.get('/', async (req, res) => {
+// Create a new plan
+router.post("/plans", async (req, res) => {
+  const {
+    providerId,
+    name,
+    description,
+    pricing,
+    contractLength,
+    renewableEnergyPercentage,
+  } = req.body;
+
+  const newPlan = new Plan({
+    providerId,
+    name,
+    description,
+    pricing,
+    contractLength,
+    renewableEnergyPercentage,
+  });
+
   try {
-    const plans = await Plan.find().populate('provider');
-    res.json(plans);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    await newPlan.save();
+    res
+      .status(201)
+      .json({ message: "Plan created successfully", plan: newPlan });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Error creating plan", details: error.message });
   }
 });
 
-// Get plan by ID
-router.get('/:id', async (req, res) => {
+// Get all plans for a specific provider
+router.get("/plans/:providerId", async (req, res) => {
+  const { providerId } = req.params;
+
   try {
-    const plan = await Plan.findById(req.params.id).populate('provider');
-    if (!plan) {
-      return res.status(404).json({ message: 'Plan not found' });
-    }
-    res.json(plan);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    const plans = await Plan.find({ providerId });
+    res.status(200).json(plans);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error fetching plans", details: error.message });
   }
 });
 
-// Create plan (admin only)
-router.post('/', auth, async (req, res) => {
-  try {
-    const plan = new Plan(req.body);
-    await plan.save();
-    res.status(201).json(plan);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
+// Update a plan
+router.put("/plans/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    name,
+    description,
+    pricing,
+    contractLength,
+    renewableEnergyPercentage,
+  } = req.body;
 
-// Update plan (admin only)
-router.put('/:id', auth, async (req, res) => {
   try {
-    const plan = await Plan.findByIdAndUpdate(
-      req.params.id,
-      req.body,
+    const updatedPlan = await Plan.findByIdAndUpdate(
+      id,
+      { name, description, pricing, contractLength, renewableEnergyPercentage },
       { new: true }
     );
-    if (!plan) {
-      return res.status(404).json({ message: 'Plan not found' });
+
+    if (!updatedPlan) {
+      return res.status(404).json({ error: "Plan not found" });
     }
-    res.json(plan);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+
+    res
+      .status(200)
+      .json({ message: "Plan updated successfully", plan: updatedPlan });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Error updating plan", details: error.message });
   }
 });
 
-export default router;
+// Delete a plan
+router.delete("/plans/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedPlan = await Plan.findByIdAndDelete(id);
+
+    if (!deletedPlan) {
+      return res.status(404).json({ error: "Plan not found" });
+    }
+
+    res.status(200).json({ message: "Plan deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error deleting plan", details: error.message });
+  }
+});
+
+module.exports = router;

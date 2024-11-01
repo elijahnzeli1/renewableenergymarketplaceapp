@@ -1,29 +1,16 @@
-import mongoose from 'mongoose';
+// models/Provider.js
+const mongoose = require("mongoose");
 
-const providerSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
+const providerSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    type: { type: String, required: true }, // e.g., solar, wind
+    location: { type: String, required: true },
+    capacity: { type: Number, required: true },
+    pricing: { type: Number, required: true },
+    description: String,
   },
-  logo: String,
-  types: [{
-    type: String,
-    enum: ['solar', 'wind', 'hydro']
-  }],
-  rating: {
-    type: Number,
-    default: 0
-  },
-  location: String,
-  description: String,
-  certifications: [String],
-  contactInfo: {
-    email: String,
-    phone: String,
-    website: String
-  }
-}, {
-  timestamps: true
-});
+  { timestamps: true }
+);
 
-export default mongoose.model('Provider', providerSchema);
+module.exports = mongoose.model("Provider", providerSchema);

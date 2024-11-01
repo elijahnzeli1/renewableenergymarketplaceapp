@@ -1,37 +1,38 @@
-import mongoose from 'mongoose';
+const mongoose = require("mongoose");
 
-const planSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
+const planSchema = new mongoose.Schema(
+  {
+    providerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Provider",
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    pricing: {
+      type: Number,
+      required: true,
+    },
+    contractLength: {
+      type: String, // e.g., "12 months"
+      required: true,
+    },
+    renewableEnergyPercentage: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 100,
+    },
   },
-  provider: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Provider',
-    required: true
-  },
-  type: {
-    type: String,
-    enum: ['solar', 'wind', 'hydro'],
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  renewable_percentage: {
-    type: Number,
-    required: true
-  },
-  contract_length: {
-    type: Number,
-    required: true
-  },
-  description: String,
-  features: [String],
-  terms_conditions: String
-}, {
-  timestamps: true
-});
+  { timestamps: true }
+);
 
-export default mongoose.model('Plan', planSchema);
+module.exports = mongoose.model("plans", planSchema);
